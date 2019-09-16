@@ -6,6 +6,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
+pd.options.mode.chained_assignment = None
 
 
 exercise_data = pd.read_excel('my_exercises_2.xlsx')
@@ -107,8 +108,9 @@ def set_count():
     #Graphing 
     ypos = np.arange(len(df_final['Exercise Name']))
     plt.yticks(ypos, df_final['Exercise Name'])
-    plt.gcf().subplots_adjust(left=0.4)
+    plt.gcf().subplots_adjust(left=0.3)
     plt.barh(ypos, df_final['Sets'],color=(1, 0, 0, .2))
+    plt.show()
 
 def plot_RM(df_RM):
     #Converts the Date column of df_top from strings to pandas datetime 
