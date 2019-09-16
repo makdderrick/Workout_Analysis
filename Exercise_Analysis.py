@@ -11,6 +11,10 @@ register_matplotlib_converters()
 exercise_data = pd.read_excel('my_exercises_2.xlsx')
 data_min = exercise_data[['Date','Exercise Name','Weight','Reps']]
 
+#Removes the (Barbell) part of the exercise names
+has_barbell = data_min['Exercise Name'].str.endswith(' (Barbell)')
+data_min['Exercise Name'][has_barbell] = data_min['Exercise Name'][has_barbell].str.slice(0,-10)
+
 def grab_exercise():
     exercise_name = input('Enter the name of the exercise: ')
     exercise_data = data_min[data_min['Exercise Name'] == exercise_name].iloc[::-1].reset_index(drop=True)
