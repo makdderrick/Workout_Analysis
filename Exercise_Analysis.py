@@ -8,27 +8,29 @@ from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 pd.options.mode.chained_assignment = None
 
-
+# Retrieves the data from the xlsx file
 exercise_data = pd.read_excel('my_exercises_2.xlsx')
 data_min = exercise_data[['Date','Exercise Name','Weight','Reps']]
 
-#Removes the (Barbell) part of the exercise names
+# Removes the (Barbell) part of the exercise names which came with the data
 has_barbell = data_min['Exercise Name'].str.endswith(' (Barbell)')
 data_min['Exercise Name'][has_barbell] = data_min['Exercise Name'][has_barbell].str.slice(0,-10)
 
+# Function that grabs values for a specific exercise from the data
 def grab_exercise():
     exercise_name = input('Enter the name of the exercise: ')
     exercise_data = data_min[data_min['Exercise Name'] == exercise_name].iloc[::-1].reset_index(drop=True)
     exercise_data['Date'] = exercise_data['Date'].str.slice(0,-9)
     return exercise_data
 
+# Function that calculates an estimate of the highest weight achievable given amount of reps completed for a given weight
 def one_RM(weight,rep):
     top_calc = weight * (1 + rep/30)
     return round(top_calc)    
 
+# Function that creates a dataframe of the one rep maxes for each set of each workout and takes the highest one rep max set for that day
 def df_RM():  
     df = grab_exercise()
-
     gb = df.groupby('Date')
     l = []
     l_top_index = []
@@ -64,6 +66,7 @@ def df_RM():
 
     return df_top.set_index(['Date']).reset_index()
 
+# Function that creates a dataframe of the volume (sets times reps) for each day
 def df_vol():
     df = grab_exercise()
     l = []
@@ -88,6 +91,7 @@ def df_vol():
     df_vol = pd.DataFrame(d).dropna()
     return df_vol
 
+# Function that counts the number of sets for each exercise and graphs the exercises that have more than 150 sets completed
 def set_count():
     #Groups all the sets of a particular exercise
     gb = data_min.groupby(['Exercise Name'])
@@ -112,6 +116,7 @@ def set_count():
     plt.barh(ypos, df_final['Sets'],color=(1, 0, 0, .2))
     plt.show()
 
+# Function that plots the rep maxes for specific exercises
 def plot_RM(df_RM):
     #Converts the Date column of df_top from strings to pandas datetime 
     df_RM['Date'] = pd.to_datetime(df_RM['Date'])
@@ -135,6 +140,7 @@ def plot_RM(df_RM):
     plt.ylabel('One RM (lbs)')
     plt.title('Daily Estimated Rep Maxes Over Several Years')
 
+# Function that plots the volumes for specific exercises
 def plot_vol(df_vol):
     df_vol['Date'] = pd.to_datetime(df_vol['Date'])
     
